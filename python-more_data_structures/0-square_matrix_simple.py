@@ -1,11 +1,3 @@
 #!/usr/bin/python3
-def safe_print_list(my_list=[], x=0):
-    count = 0
-    for i in range(x):
-        try:
-            print(my_list[i], end="")
-            count += 1
-        except IndexError:
-            break
-    print()  # Print a new line after the elements
-    return count
+def square_matrix_simple(matrix=[]):
+    return [[x ** 2 for x in row] for row in matrix]
