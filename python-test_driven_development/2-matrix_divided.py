@@ -1,353 +1,163 @@
-===============================
-2. Division of matrix module
-===============================
+#!/usr/bin/python3
+"""A module to divides all elements of a matrix.
 
-Import module:
-==============
-    >>> matrix_divided = __import__('2-matrix_divided').matrix_divided
+This module is in charge of dividing all the values of a matrix
+according to a divisor given by the user. For the program to work
+properly, the following aspects must be taken into account:
 
+    * The matrix must  must be a list of lists of integers or floats.
+    * Each row of the matrix must be of the same size.
+    * The divisor must be a number (integer or float) other than 0.
+    * The division of all elements of the matrix is rounded off
+    to 2 decimal places.
+    * The result is delivered in a new matrix.
 
-Function:
-=========
-Write a function that divides all elements of a matrix.
+"""
 
 
-Operations:
-===========
- * matrix must be a list of lists of integers or floats,
-   otherwise raise a TypeError exception with the message
-   'matrix must be a matrix (list of lists) of integers/floats'.
+def matrix_divided(matrix, div):
+    """Divides all elements of a matrix.
 
- * Each row of the matrix must be of the same size, 
-   otherwise raise a TypeError exception with the message
-   'Each row of the matrix must have the same size'.
+    This function takes the data sent by the user to verify
+    that the matrix contains lists within it and that each
+    list contains integer or floating type numbers.
+    The result of the splitting operation is then added to a
+    new list in a new matrix with the same matrix structure
+    given by the user.
 
- * div must be a number (integer or float), 
-   otherwise raise a TypeError exception with the message
-   'div must be a number'.
+    In case the format of the matrix is incorrect
+    or the divisor is not a number, this function
+    will raise an error.
 
- * div can’t be equal to 0, otherwise raise a ZeroDivisionError
-   exception with the message 'division by zero'.
+    Args:
+        matrix (:obj:`list` of :obj:`list`): The matrix to be divided.
+        div (int): The divisor number.
 
- * All elements of the matrix should be divided by div, 
-   rounded to 2 decimal places.
+    Returns:
+        list: A new matrix with all elements divided.
 
+    Raises:
+        TypeError: If `matrix` list of lists of integers or floats or
+            if `div` is not a number.
+        ZeroDivisionError: If `div` is equal to `0`.
 
-Section // Non-Parameters
-=========================
+    """
 
-Test case #0: A test case without parameters
+    check_for_list(matrix)
+    check_for_divisor(div)
 
-    >>> matrix_divided()
-    Traceback (most recent call last):
-    TypeError: matrix_divided() missing 2 required positional arguments: 'matrix' and 'div'
+    elem_sizes = set()
+    new_list = list()
 
+    for elem in matrix:
+        if check_for_list(elem) is False:
+            raises_matrix_type_error()
 
-Section // Correct Matrix
-=========================
+        elem_sizes = check_row_size_inconsistency(elem_sizes, elem)
+        values = []
 
-Test case #1: A test case with integer elements and integer divider
+        for value in elem:
+            if check_for_number(value) is False:
+                raises_matrix_type_error()
 
-    >>> matrix = [[1, 2, 3],[4, 5, 6]]
-    >>> matrix_divided(matrix, 3)
-    [[0.33, 0.67, 1.0], [1.33, 1.67, 2.0]]
+            values.append(round(value / div, 2))
 
-Test case #2: A test case with integer and float elements and float divider
+        new_list.append(values)
 
-    >>> matrix = [[1.0, -2.0, -3.0],[-4.0, 5.0, -6.0]]
-    >>> matrix_divided(matrix, 3.0)
-    [[0.33, -0.67, -1.0], [-1.33, 1.67, -2.0]]
+    return new_list
 
-Test case #3: A test case with infinity elements to divide
 
-    >>> matrix = [[1e400, 1e500, 1e600],[1e900, 1e800, 1e700]]
-    >>> matrix_divided(matrix, 3)
-    [[inf, inf, inf], [inf, inf, inf]]
+def check_for_list(value):
+    """
 
+    Check if the value is of type list
 
-Section // Incorrect Matrix
-===========================
+    Args:
+        value (any): The value to verify.
 
-Test case #4: A test case with a matrix as a string
+    Raises:
+        TypeError: If `value` isn't a list.
 
-    >>> matrix = 'Monty Python'
-    >>> matrix_divided(matrix, 3)
-    Traceback (most recent call last):
-    TypeError: matrix must be a matrix (list of lists) of integers/floats
+    """
 
-Test case #5: A test case with the rows of an inconsistent size matrix
+    if type(value) is not list or len(value) == 0:
+        raises_matrix_type_error()
 
-    >>> matrix = [[1, 2, 3], 4, 5, 6]
-    >>> matrix_divided(matrix, 3)
-    Traceback (most recent call last):
-    TypeError: matrix must be a matrix (list of lists) of integers/floats
 
-Test case #6: A test case with lists of integers and floats within
-the rows of the matrix
+def check_for_divisor(div):
+    """
 
-    >>> matrix = [[[10.0], [65], [37.0]],[[40], [15.0], [66]]]
-    >>> matrix_divided(matrix, 2)
-    Traceback (most recent call last):
-    TypeError: matrix must be a matrix (list of lists) of integers/floats
+    Check if the divisor is integer, float or zero
 
-Test case #7: A test case with strings within the rows of the matrix
+    Args:
+        div (any): The divisor to verify.
 
-    >>> matrix = [['1', '2', '3'], ['4', '5', '6']]
-    >>> matrix_divided(matrix, 3)
-    Traceback (most recent call last):
-    TypeError: matrix must be a matrix (list of lists) of integers/floats
+    Raises:
+        TypeError: If `value` isn't integer or float.
+        ZeroDivisionError: If `div` is equal to `0`.
 
-Test case #8: A test case with integers instead of lists in the matrix
+    """
 
-    >>> matrix = [1, 2, 3, 4, 5, 6]
-    >>> matrix_divided(matrix, 3)
-    Traceback (most recent call last):
-    TypeError: matrix must be a matrix (list of lists) of integers/floats
+    if check_for_number(div) is False:
+        raise TypeError('div must be a number')
 
-Test case #9: A test case with a string acting as a row
+    if div == 0:
+        raise ZeroDivisionError('division by zero')
 
-    >>> matrix = [[1, 2, 3], [4, 5, 6], 'Monty Python']
-    >>> matrix_divided('matrix', 2)
-    Traceback (most recent call last):
-    TypeError: matrix must be a matrix (list of lists) of integers/floats
 
-Test case #10: A test case with a matrix of empty lists
-    >>> matrix = []
-    >>> type(matrix_divided(matrix, 3))
-    Traceback (most recent call last):
-    TypeError: matrix must be a matrix (list of lists) of integers/floats
+def check_for_number(value):
+    """Check if the value is integer or float
 
-Test case #11: A test case with a matrix of empty lists
-    >>> matrix = [[], []]
-    >>> type(matrix_divided(matrix, 3))
-    Traceback (most recent call last):
-    TypeError: matrix must be a matrix (list of lists) of integers/floats
+    Args:
+        value (any): The value to verify.
 
+    Returns:
+        bool: True if successful, False otherwise.
 
-Section // Bad Divisor
-======================
+    """
 
-Test case #12: A test case with a 'None' divider
+    if type(value) is not int and type(value) is not float:
+        return False
 
-    >>> matrix = [[1, 2, 54.0], [24, 35.5, 6]]
-    >>> matrix_divided(matrix, None)
-    Traceback (most recent call last):
-    TypeError: div must be a number
+    """ Check for a NaN value """
+    if value != value:
+        return False
 
-Test case #13: A test case with a string divider
+    return True
 
-    >>> matrix = [[1, 2, 54.0], [24, 35.5, 6]]
-    >>> matrix_divided(matrix, 'Monty Python')
-    Traceback (most recent call last):
-    TypeError: div must be a number
 
-Test case #14: A test case with a NaN divider
+def check_row_size_inconsistency(elem_sizes, row):
+    """Checks the size consistency of rows in a matrix
 
-    >>> matrix = [[1, 2, 54.0], [24, 35.5, 6]]
-    >>> matrix_divided(matrix, float('nan'))
-    Traceback (most recent call last):
-    TypeError: div must be a number
+    Check if all rows in the matrix are inconsistently sized
 
-Test case #15: A test case with a zero as a divisor
+    Args:
+        elem_sizes (:obj:`set` of :obj:`int`): Size of each row matrix.
+        row (list): A row with elements to divide.
 
-    >>> matrix = [[10.0, 65, 37.0],[40, 15.0, 66]]
-    >>> matrix_divided(matrix, 0)
-    Traceback (most recent call last):
-    ZeroDivisionError: division by zero
+    Returns:
+        set: A unique consistent size between all rows.
 
+    Raises:
+        TypeError: If `elem_sizes` has more than one size in its contents.
 
-Section // Inconsistent rows
-======================
+    """
 
-Test case #16: A test case with inconsistent rows
+    elem_sizes.add(len(row))
 
-    >>> matrix = [[1, 2, 3], [4, 5]]
-    >>> matrix_divided(matrix, 3)
-    Traceback (most recent call last):
-    TypeError: Each row of the matrix must have the same size
+    if len(elem_sizes) > 1:
+        raise TypeError('Each row of the matrix must have the same size')
 
+    return elem_sizes
 
-Section // Types
-======================
 
-Test case #17: A test case with the type of value returned
+def raises_matrix_type_error():
+    """Raises a Matrix TypeError
 
-    >>> matrix = [[1, 2, 3], [4, 5, 6]]
-    >>> type(matrix_divided(matrix, 3))
-    <class 'list'>===============================
-2. Division of matrix module
-===============================
+    Raises:
+        TypeError: If `matrix` list of lists of integers or floats.
 
-Import module:
-==============
-    >>> matrix_divided = __import__('2-matrix_divided').matrix_divided
+    """
 
-
-Function:
-=========
-Write a function that divides all elements of a matrix.
-
-
-Operations:
-===========
- * matrix must be a list of lists of integers or floats,
-   otherwise raise a TypeError exception with the message
-   'matrix must be a matrix (list of lists) of integers/floats'.
-
- * Each row of the matrix must be of the same size, 
-   otherwise raise a TypeError exception with the message
-   'Each row of the matrix must have the same size'.
-
- * div must be a number (integer or float), 
-   otherwise raise a TypeError exception with the message
-   'div must be a number'.
-
- * div can’t be equal to 0, otherwise raise a ZeroDivisionError
-   exception with the message 'division by zero'.
-
- * All elements of the matrix should be divided by div, 
-   rounded to 2 decimal places.
-
-
-Section // Non-Parameters
-=========================
-
-Test case #0: A test case without parameters
-
-    >>> matrix_divided()
-    Traceback (most recent call last):
-    TypeError: matrix_divided() missing 2 required positional arguments: 'matrix' and 'div'
-
-
-Section // Correct Matrix
-=========================
-
-Test case #1: A test case with integer elements and integer divider
-
-    >>> matrix = [[1, 2, 3],[4, 5, 6]]
-    >>> matrix_divided(matrix, 3)
-    [[0.33, 0.67, 1.0], [1.33, 1.67, 2.0]]
-
-Test case #2: A test case with integer and float elements and float divider
-
-    >>> matrix = [[1.0, -2.0, -3.0],[-4.0, 5.0, -6.0]]
-    >>> matrix_divided(matrix, 3.0)
-    [[0.33, -0.67, -1.0], [-1.33, 1.67, -2.0]]
-
-Test case #3: A test case with infinity elements to divide
-
-    >>> matrix = [[1e400, 1e500, 1e600],[1e900, 1e800, 1e700]]
-    >>> matrix_divided(matrix, 3)
-    [[inf, inf, inf], [inf, inf, inf]]
-
-
-Section // Incorrect Matrix
-===========================
-
-Test case #4: A test case with a matrix as a string
-
-    >>> matrix = 'Monty Python'
-    >>> matrix_divided(matrix, 3)
-    Traceback (most recent call last):
-    TypeError: matrix must be a matrix (list of lists) of integers/floats
-
-Test case #5: A test case with the rows of an inconsistent size matrix
-
-    >>> matrix = [[1, 2, 3], 4, 5, 6]
-    >>> matrix_divided(matrix, 3)
-    Traceback (most recent call last):
-    TypeError: matrix must be a matrix (list of lists) of integers/floats
-
-Test case #6: A test case with lists of integers and floats within
-the rows of the matrix
-
-    >>> matrix = [[[10.0], [65], [37.0]],[[40], [15.0], [66]]]
-    >>> matrix_divided(matrix, 2)
-    Traceback (most recent call last):
-    TypeError: matrix must be a matrix (list of lists) of integers/floats
-
-Test case #7: A test case with strings within the rows of the matrix
-
-    >>> matrix = [['1', '2', '3'], ['4', '5', '6']]
-    >>> matrix_divided(matrix, 3)
-    Traceback (most recent call last):
-    TypeError: matrix must be a matrix (list of lists) of integers/floats
-
-Test case #8: A test case with integers instead of lists in the matrix
-
-    >>> matrix = [1, 2, 3, 4, 5, 6]
-    >>> matrix_divided(matrix, 3)
-    Traceback (most recent call last):
-    TypeError: matrix must be a matrix (list of lists) of integers/floats
-
-Test case #9: A test case with a string acting as a row
-
-    >>> matrix = [[1, 2, 3], [4, 5, 6], 'Monty Python']
-    >>> matrix_divided('matrix', 2)
-    Traceback (most recent call last):
-    TypeError: matrix must be a matrix (list of lists) of integers/floats
-
-Test case #10: A test case with a matrix of empty lists
-    >>> matrix = []
-    >>> type(matrix_divided(matrix, 3))
-    Traceback (most recent call last):
-    TypeError: matrix must be a matrix (list of lists) of integers/floats
-
-Test case #11: A test case with a matrix of empty lists
-    >>> matrix = [[], []]
-    >>> type(matrix_divided(matrix, 3))
-    Traceback (most recent call last):
-    TypeError: matrix must be a matrix (list of lists) of integers/floats
-
-
-Section // Bad Divisor
-======================
-
-Test case #12: A test case with a 'None' divider
-
-    >>> matrix = [[1, 2, 54.0], [24, 35.5, 6]]
-    >>> matrix_divided(matrix, None)
-    Traceback (most recent call last):
-    TypeError: div must be a number
-
-Test case #13: A test case with a string divider
-
-    >>> matrix = [[1, 2, 54.0], [24, 35.5, 6]]
-    >>> matrix_divided(matrix, 'Monty Python')
-    Traceback (most recent call last):
-    TypeError: div must be a number
-
-Test case #14: A test case with a NaN divider
-
-    >>> matrix = [[1, 2, 54.0], [24, 35.5, 6]]
-    >>> matrix_divided(matrix, float('nan'))
-    Traceback (most recent call last):
-    TypeError: div must be a number
-
-Test case #15: A test case with a zero as a divisor
-
-    >>> matrix = [[10.0, 65, 37.0],[40, 15.0, 66]]
-    >>> matrix_divided(matrix, 0)
-    Traceback (most recent call last):
-    ZeroDivisionError: division by zero
-
-
-Section // Inconsistent rows
-======================
-
-Test case #16: A test case with inconsistent rows
-
-    >>> matrix = [[1, 2, 3], [4, 5]]
-    >>> matrix_divided(matrix, 3)
-    Traceback (most recent call last):
-    TypeError: Each row of the matrix must have the same size
-
-
-Section // Types
-======================
-
-Test case #17: A test case with the type of value returned
-
-    >>> matrix = [[1, 2, 3], [4, 5, 6]]
-    >>> type(matrix_divided(matrix, 3))
-    <class 'list'>
+    raise TypeError('matrix must be a matrix \
+(list of lists) of integers/floats')
